@@ -1,0 +1,79 @@
+#floorplan {
+  width: 100%;
+  height: 100vh;
+  border: 1px solid black;
+}
+.marker {
+  cursor: pointer;
+  fill: red;
+  stroke: black;
+}
+
+#mapImage {
+  transition: opacity 0.25s ease-in;
+}
+
+.marker-overlay {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  z-index: 9000;
+}
+
+.marker-content {
+  position: relative;
+  left: -50%;
+  width: 100px;
+  background-color: aliceblue;
+  top: -16px;
+  box-shadow: -1px 1px 7px 2px rgba(0, 0, 0, 0.36);
+}
+
+.marker-tip-shadow {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  transform-origin: center;
+  z-index: -1;
+  box-shadow: 0px 0px 8px 1px black;
+  -moz-box-shadow: 0px 0px 8px 1px black;
+  -webkit-box-shadow: 0px 0px 8px 1px black; 
+}
+
+.tip-down .marker-tip {
+  top: 0px;
+  left: -16px;
+  border-color: #f9f9f9 transparent transparent transparent;
+}
+
+.tip-right .marker-tip {
+  top: 50%;
+  right: 16px;
+  border-color: transparent transparent #f9f9f9  transparent;
+  border-top: 20px solid transparent;
+  border-right: 20px solid red;
+  border-bottom: 20px solid transparent;
+}
+
+.tip-down .marker-tip-shadow {
+  transform: rotate(45deg);
+  top: -8px;
+  left: -8px;
+}
+
+.marker-stuff {
+  background-color: aliceblue;
+  position: relative;
+  z-index: 3;
+}
+
+.marker-tip {
+  width: 0px;
+  height: 0px;
+  border-width: 16px;
+  border-style: solid;
+  position: absolute;
+  transform-origin: center;
+  z-index: 1;
+}
