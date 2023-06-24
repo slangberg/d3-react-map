@@ -43,6 +43,8 @@ export default class ImageMap {
 
       this.defs = this.svg.append("defs");
       this.markerGroup = this.svg.append("g");
+
+      this.markerGroup.on("markerClicked", console.log)
     
       this.zoom = d3
         .zoom()
@@ -88,6 +90,7 @@ export default class ImageMap {
       this.handleCursorResize(event);
     }
 
+
     handleCursorResize = (event) => {
       clearTimeout(this.zoomTimeout);
       if (event.sourceEvent && event.sourceEvent.type === "mousemove") {
@@ -112,5 +115,29 @@ export default class ImageMap {
 
       observer.observe(this.svg.node());
     };
+
+    panAndZoom(x, y, zoomLevel) {
+      const svgNode = this.svg.node();
+      const svgWidth = svgNode.clientWidth;
+      const svgHeight = svgNode.clientHeight;
+      
+      const scaleX = svgWidth / 2 - zoomLevel * x;
+      const scaleY = svgHeight / 2 - zoomLevel * y;
+      
+      this.svg
+        .transition()
+        .duration(750)
+        .call(
+          this.zoom.transform,
+          d3.zoomIdentity.translate(scaleX, scaleY),
+        )
+        .transition()
+        .duration(100)
+        .call(
+          this.zoom.transform,
+          d3.zoomIdentity.translate(scaleX, scaleY).scale(zoomLevel),
+        );
+    }
+    
   }
 

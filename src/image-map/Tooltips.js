@@ -21,7 +21,7 @@ export default class Tooltip {
       markerClientRect.top > svgContainerBounds.bottom - padding;
 
     if (overlayDiv && overlayNode && !outsideFrame) {
-        const topOffset = markerClientRect.top + tooltipOffsetY;
+        const topOffset = markerClientRect.top + tooltipOffsetY  / 2;
         const leftOffset =
           markerClientRect.left + markerClientRect.width / 2 + tooltipOffsetX;
 
@@ -52,12 +52,12 @@ export default class Tooltip {
     const content = overlayDiv
       .append("div")
       .attr("class", "marker-content")
-      .attr("id", `marker-overlay-${markerData.id}-content`);
+      .attr("id", `marker-overlay-${markerData.id}-content`)
+      .html(markerData.name)
+      
 
     overlayDiv.append("div").attr("class", "marker-tip")
     overlayDiv.append("div").attr("class", "marker-tip-shadow");
-
-    content.append("div").attr("class", "marker-stuff").text(markerData.name);
 
     const topOffset = markerClientRect.top + tooltipOffsetY;
     const leftOffset =
@@ -67,10 +67,6 @@ export default class Tooltip {
       .style("top", `${topOffset}px`)
       .style("left", `${leftOffset}px`)
       .style("opacity", "1");
-
-    const boxRect = content.node().getBoundingClientRect();
-    const adjustedLeft = boxRect.width / 2;
-    content.style("left", `${-adjustedLeft}px`);
 
     this.translateContent(content);
   };

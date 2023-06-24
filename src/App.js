@@ -4,7 +4,7 @@ import 'animate.css';
 import { useEffect } from "react";
 import ImageMap from "./image-map/ImageMap";
 import mapUrl from "./image-map/map.jpeg";
-import pinUrl from "./image-map/marker.svg";
+import pinUrl from "./image-map/marker-2.svg";
 let map;
 function App() {
   useEffect(() => {
@@ -29,7 +29,7 @@ function App() {
         id: "base",
         width: 60,
         height: 60,
-        offset: [-28, -60],
+        offset: [-31, -55],
         toolTipOffset: [0, 0],
       },
     };
@@ -42,11 +42,12 @@ function App() {
         assets,
         single: true
       });
+      window.map = map
     }
   }, []);
   return (
     <div>
-      <header className="App-header">Test</header>
+      <header className="App-header"><button onClick={() => map.panAndZoom(100, 100, 1)}>Test</button></header>
       <svg id="floorplan"></svg>
     </div>
   );

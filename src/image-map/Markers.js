@@ -56,7 +56,23 @@ export default class Markers {
       .attr("height", (d) => this.getMarkerSize(d.marker, "height"))
       .attr("x", (d) => d.x + this.getMarkerOffset(d.marker, "x"))
       .attr("y", (d) => d.y + this.getMarkerOffset(d.marker, "y"))
+      // .on("click", (event, d) => this.markerClicked(event, d));
+
+    
+      this.markerGroup
+      .selectAll(".marker-target")
+      .data(this.markersData)
+      .join("rect")
+      .attr("class", "marker-target")
+      .attr("id", (d) => `marker-${d.id}-target`)
+      .attr("fill", (d) => `transparent`)
+      .attr("width", (d) => this.getMarkerSize(d.marker, "width"))
+      .attr("height", (d) => this.getMarkerSize(d.marker, "height"))
+      .attr("x", (d) => d.x + this.getMarkerOffset(d.marker, "x"))
+      .attr("y", (d) => d.y + this.getMarkerOffset(d.marker, "y"))
       .on("click", (event, d) => this.markerClicked(event, d));
+
+  
   }
 
   moveTooltip = () => {
@@ -74,7 +90,7 @@ export default class Markers {
     event.stopPropagation();
     const existingOverlayDiv = select(`#marker-overlay-${d.id}`);
     const marker = select(event.target);
-
+    marker.dispatch("markerClicked")
     if (!existingOverlayDiv.node()) {
       const markerNode = marker.node();
       const tooltipOffsetX = this.getTooltipOffset(d.marker, "x");
