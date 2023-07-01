@@ -10,7 +10,9 @@ export default class Markers {
     toolTipBoundary,
     assets,
     tooltipHandler,
+    eventDispatcher,
   }) {
+    this.eventDispatcher = eventDispatcher;
     this.markerGroup = markerGroup;
     this.svg = svg;
     this.defs = defs;
@@ -55,11 +57,10 @@ export default class Markers {
       .attr("width", (d) => this.getMarkerSize(d.marker, "width"))
       .attr("height", (d) => this.getMarkerSize(d.marker, "height"))
       .attr("x", (d) => d.x + this.getMarkerOffset(d.marker, "x"))
-      .attr("y", (d) => d.y + this.getMarkerOffset(d.marker, "y"))
-      // .on("click", (event, d) => this.markerClicked(event, d));
+      .attr("y", (d) => d.y + this.getMarkerOffset(d.marker, "y"));
+    // .on("click", (event, d) => this.markerClicked(event, d));
 
-    
-      this.markerGroup
+    this.markerGroup
       .selectAll(".marker-target")
       .data(this.markersData)
       .join("rect")
@@ -71,8 +72,6 @@ export default class Markers {
       .attr("x", (d) => d.x + this.getMarkerOffset(d.marker, "x"))
       .attr("y", (d) => d.y + this.getMarkerOffset(d.marker, "y"))
       .on("click", (event, d) => this.markerClicked(event, d));
-
-  
   }
 
   moveTooltip = () => {
@@ -86,11 +85,30 @@ export default class Markers {
     });
   };
 
+
+  getMarkerData = (markerId) => {
+    const d = this.markersData.find(({id}) => id === markerId)
+    return {
+      ...d,
+      x: d.x + this.getMarkerOffset(d.marker, "x"),
+      y: d.y + this.getMarkerOffset(d.marker, "y"),
+      toolTipX: d.x + this.getTooltipOffset(d.marker, "x"),
+      toolTipY: d.y + this.getTooltipOffset(d.marker, "y"),
+      node: this.markerGroup.select(`#marker-${d.id}`).node()
+    }
+  }
+
   markerClicked(event, d) {
     event.stopPropagation();
     const existingOverlayDiv = select(`#marker-overlay-${d.id}`);
     const marker = select(event.target);
-    marker.dispatch("markerClicked")
+    this.eventDispatcher.dispatch("onMarkerClick", {
+      data: {
+        ...d,
+        x: this.getMarkerOffset(d.marker, "x"),
+        y: this.getMarkerOffset(d.marker, "y"),
+      },
+    });
     if (!existingOverlayDiv.node()) {
       const markerNode = marker.node();
       const tooltipOffsetX = this.getTooltipOffset(d.marker, "x");

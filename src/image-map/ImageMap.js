@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import Markers from "./Markers";
 import AssetLoader from "./AssetLoader";
 import Tooltip from "./Tooltips";
+import EventDispatcher from "./EventDispatcher";
 
 export default class ImageMap {
     constructor(config) {
@@ -13,6 +14,7 @@ export default class ImageMap {
       this.imageLoaded = false;
       this.assets = assets;
       this.loadedState = { image: false, assets: false}
+      this.eventDispatcher = new EventDispatcher()
 
 
       this.init(config);
@@ -72,15 +74,27 @@ export default class ImageMap {
         toolTipBoundary,
         assets,
         tooltipHandler: this.tooltipHandler,
+        eventDispatcher: this.eventDispatcher
       });
 
       this.assetLoader = new AssetLoader({ container: defs, assets, svg })
+
       
+      this.eventDispatcher.registerListeners({
+        "zoomToPosition": (config) =>  this.panAndZoom(config),
+        "zoomToMarker":  (id) =>  this.zoomToMarker(id),
+        "centerMap": () =>  this.centerMap(),
+        "zoomToContainElement":  (id) =>  this.zoomToContainElement(id , this.svg),
+      });
      
       this.handleResize(); // Call handleResize initially
       
     }
 
+    getEventApi = () => {
+      return this.eventDispatcher;
+    }
+ 
     zoomed(event) {
       const { transform } = event;
      
@@ -116,7 +130,7 @@ export default class ImageMap {
       observer.observe(this.svg.node());
     };
 
-    panAndZoom(x, y, zoomLevel) {
+    panAndZoom({x, y, zoomLevel}) {
       const svgNode = this.svg.node();
       const svgWidth = svgNode.clientWidth;
       const svgHeight = svgNode.clientHeight;
@@ -126,16 +140,50 @@ export default class ImageMap {
       
       this.svg
         .transition()
-        .duration(750)
-        .call(
-          this.zoom.transform,
-          d3.zoomIdentity.translate(scaleX, scaleY),
-        )
-        .transition()
-        .duration(100)
+        .duration(500)
         .call(
           this.zoom.transform,
           d3.zoomIdentity.translate(scaleX, scaleY).scale(zoomLevel),
+        );
+    }
+
+    zoomToMarker = (id) => {
+      const data = this.markers.getMarkerData(id)
+      if(data){
+        const {x, y} = data;
+        this.panAndZoom({x, y, zoomLevel: 3})
+      }
+    }
+
+    zoomToContainElement = (id, svg) => {
+      const data = this.markers.getMarkerData(id)
+
+
+      if(data){
+        const { node, x, y } = data;
+        var bbox = node.getBoundingClientRect();
+    
+        // Get the dimensions of the SVG viewport
+        var width = svg.node().clientWidth;
+        var height = svg.node().clientHeight;
+    
+        // Calculate the scale
+        var scaleX = width / bbox.width;
+        var scaleY = height / bbox.height;
+        var scale = Math.min(scaleX, scaleY);  // Ensure the element fits both dimensions
+
+        this.panAndZoom({x, y, zoomLevel: scale})
+      }
+  }
+  
+
+    centerMap = () => {
+      this.svg
+        .transition()
+        .duration(500)
+        .call(
+          this.zoom.transform,
+          d3.zoomIdentity.translate(0, 0).scale(1),
         );
     }
     
