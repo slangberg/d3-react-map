@@ -1,5 +1,8 @@
 import { dispatch } from "d3";
 
+/**
+ * The API Event Dispatcher for the ImageMap allows for simple event dispatching and listeners to exist outside of ImageMap
+ */
 export default class EventDispatcher {
   constructor() {
     this.events = [
@@ -9,7 +12,7 @@ export default class EventDispatcher {
       "onMarkerClick",
       "onPanZoom",
       "onTooltipShow",
-      "onTooltipHide"
+      "onTooltipHide",
     ];
 
     this.actions = [
@@ -18,7 +21,7 @@ export default class EventDispatcher {
       "zoomToPosition",
       "centerMap",
       "removeTooltip",
-      "showTooltip"
+      "showTooltip",
     ];
 
     this.eventTypes = [...this.events, ...this.actions];
@@ -29,6 +32,9 @@ export default class EventDispatcher {
     this.buildApiMethods();
   }
 
+  /**
+   * Build API methods for each of the Event Dispatcher's events and actions.
+   */
   buildApiMethods = () => {
     this.actions.forEach((methodName) => {
       this[methodName] = (data) => this.dispatch(methodName, data);
@@ -39,12 +45,21 @@ export default class EventDispatcher {
     });
   };
 
+  /**
+   * Register a group of listeners for the Event Dispatcher based of a dictatory object
+   * @param {Object} listenerDictionary - The dictionary of listeners.
+   */
   registerListeners = (listenerDictionary) => {
     Object.entries(listenerDictionary).forEach(([id, callback]) => {
       this.register(id, callback);
     });
   };
 
+  /**
+   * Register a callback for a specific event type.
+   * @param {string} eventType - The type of the event.
+   * @param {Function} callback - The callback function.
+   */
   register = (eventType, callback) => {
     if (!this.listeners[eventType]) {
       this.listeners[eventType] = [];
@@ -55,6 +70,11 @@ export default class EventDispatcher {
     );
   };
 
+  /**
+   * Dispatch an event.
+   * @param {string} eventType - The type of the event.
+   * @param {Object} data - The data to be passed to the event.
+   */
   dispatch = (eventType, data) => {
     if (this.eventTypes.includes(eventType)) {
       this.dispatcher.call(eventType, null, data);

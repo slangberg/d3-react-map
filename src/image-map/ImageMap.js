@@ -4,7 +4,19 @@ import AssetLoader from "./AssetLoader";
 import Tooltip from "./Tooltips";
 import EventDispatcher from "./EventDispatcher";
 
+/**
+ * The base image map class used to generate can
+ */
 export default class ImageMap {
+  /**
+   * Create an Image Map.
+   * @param {Object} config - The configuration object.
+   * @param {string} config.containerId - The ID of the container element.
+   * @param {Object} config.imageData - The image data object.
+   * @param {Array} config.markersData - The markers data array.
+   * @param {Array} config.assets - The assets array.
+   * @param {boolean} config.multiSelectionMode - The multi-selection mode flag.
+   */
   constructor(config) {
     const { containerId, imageData, markersData, assets, multiSelectionMode } =
       config;
@@ -18,9 +30,14 @@ export default class ImageMap {
     this.eventDispatcher = new EventDispatcher();
     this.multiSelection = multiSelectionMode;
 
-    this.init(config);
+    this.init();
   }
 
+  /**
+   * Set the load state of various process such as assets, image load.
+   * @param {string} type - The type of the load state.
+   * @param {boolean} value - The value of the load state.
+   */
   setLoadState = (type, value) => {
     this.loadedState[type] = value;
     const isNotLoad = Object.values(this.loadedState).some((value) => !value);
@@ -30,7 +47,10 @@ export default class ImageMap {
     }
   };
 
-  init(config) {
+  /**
+   * Initialize the map and draws the markers
+   */
+  init() {
     this.svg = d3
       .select(`#${this.containerId}`)
       .attr("viewBox", `0 0 ${this.imageData.width} ${this.imageData.height}`)
@@ -97,19 +117,27 @@ export default class ImageMap {
       zoomToPosition: (config) => this.panAndZoom(config),
       zoomToMarker: (id) => this.zoomToMarker(id),
       centerMap: () => this.centerMap(),
-      zoomToContainElement: (id) => this.zoomToContainElement(id, this.svg),
+      zoomToContainElement: (id) => this.zoomToContainElement(id),
       removeTooltip: (id) => this.tooltipHandler.removeTooltip(id),
       showTooltip: (id) => this.markers.showTooltip(id),
-      onMarkerClick: ({id}) => this.zoomToMarker(id)
+      onMarkerClick: ({ id }) => this.zoomToMarker(id),
     });
 
     this.handleResize(); // Call handleResize initially
   }
 
+  /**
+   * Get the event API.
+   * @returns {EventDispatcher} The event dispatcher.
+   */
   getEventApi = () => {
     return this.eventDispatcher;
   };
 
+  /**
+   * Handle native D3 pan and zoom event.
+   * @param {Object} event - The event object.
+   */
   zoomed(event) {
     const { transform } = event;
 
@@ -119,7 +147,11 @@ export default class ImageMap {
     this.handleCursorResize(event);
   }
 
-  handleCursorResize = (event) => {
+  /**
+   * Set what the mouse cursor will be based on the zoom and pan event.
+   * @param {Object} event - The event object.
+   */
+  handleCursorChange = (event) => {
     clearTimeout(this.zoomTimeout);
     if (event.sourceEvent && event.sourceEvent.type === "mousemove") {
       this.svg.style("cursor", "grabbing"); // Set cursor to "grabbing" when dragging starts
@@ -133,6 +165,9 @@ export default class ImageMap {
     }
   };
 
+  /**
+   * Handles rerendering based on the SVG resize event
+   */
   handleResize = () => {
     const observer = new ResizeObserver((entries) => {
       this.markers.moveTooltip();
@@ -141,6 +176,13 @@ export default class ImageMap {
     observer.observe(this.svg.node());
   };
 
+  /**
+   * Pan and zoom to a specific position.
+   * @param {Object} config - The configuration object.
+   * @param {number} config.x - The x-coordinate.
+   * @param {number} config.y - The y-coordinate.
+   * @param {number} config.zoomLevel - The zoom level.
+   */
   panAndZoom({ x, y, zoomLevel }) {
     const svgNode = this.svg.node();
     const svgWidth = svgNode.clientWidth;
@@ -158,6 +200,10 @@ export default class ImageMap {
       );
   }
 
+  /**
+   * Zoom to a specific marker.
+   * @param {string} id - The ID of the marker.
+   */
   zoomToMarker = (id) => {
     const data = this.markers.getMarkerData(id);
     if (data) {
@@ -166,8 +212,13 @@ export default class ImageMap {
     }
   };
 
-  zoomToContainElement = (id, svg) => {
+  /**
+   * Zoom to contain a specific element.
+   * @param {string} id - The ID of the element.
+   */
+  zoomToContainElement = (id) => {
     const data = this.markers.getMarkerData(id);
+    const svg = this.svg;
 
     if (data) {
       const { node, x, y } = data;
@@ -186,6 +237,9 @@ export default class ImageMap {
     }
   };
 
+  /**
+   * Center the map.
+   */
   centerMap = () => {
     this.svg
       .transition()
