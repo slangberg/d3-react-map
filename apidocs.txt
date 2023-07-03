@@ -1,0 +1,48 @@
+/**
+ * Listener: zoomToPosition
+ * Sets the current pan origin to the provided coordinates and the zoom to zoomLevel
+ * @param {number} callback.config.x - The x-coordinate.
+ * @param {number} callback.config.y - The y-coordinate.
+ * @param {number} callback.config.zoomLevel - The zoom level.
+ */
+
+/**
+ * Listener: zoomToMarker
+ * Sets the current pan origin to the specified marker
+ * @param {string} id - The ID of the marker.
+ */
+
+/**
+ * Listener: centerMap
+ * Will reset the maps pan origin to the map center and zoom to 1.
+ */
+
+/**
+ * Listener: zoomToContainElement
+ * Will pan to center the element and set the zoom to contain a specific element.
+ * @param {string} id - The ID of the element.
+
+ * Listener: hideTooltip
+ * Registers a callback for the removeTooltip event.
+ * @param {string} id - The ID of the marker.
+ */
+
+/**
+ * Listener: showTooltip
+ * Shows the tooltip for the specified Marker
+ * @param {string} id - The ID of the marker.
+ */
+
+**
+ * Listener: hideTooltip
+ * Hides the tooltip for the specified Marker
+ * @param {string} id - The ID of the marker.
+ */
+
+
+/**
+ * Listener: onMarkerClick
+ * Registers a callback for the onMarkerClick event.
+ * @callback {Function} callback - The callback function.
+ * @param {Object} data - The marker object related to the marker click.
+ */

@@ -1,70 +1,94 @@
-# Getting Started with Create React App
+### D3-ImageMap Class Documentation
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The D3-ImageMap is a powerful tool for creating interactive image maps with markers and tooltips. It leverages the capabilities of the d3 library and provides an intuitive interface for displaying and interacting with images.
 
-## Available Scripts
+## Key Features:
 
-In the project directory, you can run:
+- Easily create interactive image maps with markers that can be clicked and interacted with.
+- Easily use existing SVGs for markers with not required changes to the SVG code
+- Display tooltips associated with each marker to provide additional information or context.
+- Support for multi-selection mode to enable selecting multiple markers simultaneously.
+- Zooming and panning functionality for detailed exploration of the image map.
+- Event system to handle various interactions and trigger custom actions.
 
-### `npm start`
+## Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To use the D3-ImageMa class, follow these steps:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Create an instance of the ImageMap class with a configuration object specifying the necessary parameters such as `containerId`, `imageData`, `markersData`, `assets`, and `multiSelectionMode`.
+- Use the `getEventAPI` to get access to the map event listeners and dispatchers
 
-### `npm test`
+## API Example
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Actions
 
-### `npm run build`
+#### api.zoomToPosition
+Registers a callback for the `zoomToPosition` event.
+- **callback** (`Function`): The callback function.
+  - `callback.config` (`Object`): The configuration object.
+    - `callback.config.x` (`number`): The x-coordinate.
+    - `callback.config.y` (`number`): The y-coordinate.
+    - `callback.config.zoomLevel` (`number`): The zoom level.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### api.zoomToMarker
+Registers a callback for the `zoomToMarker` event.
+- **callback** (`Function`): The callback function.
+  - `callback.id` (`string`): The ID of the marker.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### api.centerMap
+Registers a callback for the `centerMap` event.
+- **callback** (`Function`): The callback function.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### api.zoomToContainElement
+Registers a callback for the `zoomToContainElement` event.
+- **callback** (`Function`): The callback function.
+  - `callback.id` (`string`): The ID of the element.
 
-### `npm run eject`
+#### api.removeTooltip
+Registers a callback for the `removeTooltip` event.
+- **callback** (`Function`): The callback function.
+  - `callback.id` (`string`): The ID of the tooltip.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### api.showTooltip
+Registers a callback for the `showTooltip` event.
+- **callback** (`Function`): The callback function.
+  - `callback.id` (`string`): The ID of the tooltip.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Events
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### api.onMarkerClick
+Registers a callback for the `onMarkerClick` event, which fires when a user clicks a marker.
+- **callback** (`Function`): The callback function.
+  - `callback.data` (`Object`): The data related to the marker click.
+  
 
-## Learn More
+#### api.onPanZoom
+Registers a callback for the `onPanZoom` event which fires whenever a user pans or zooms the map.
+- **callback** (`Function`): The callback function.
+  - `data` (`Object`): The data related to the current pan and zoom event.
+  
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### api.onTooltipShow
+Registers a callback for the `onTooltipShow` event, which fires when a tooltip is rendered over the map
+- **callback** (`Function`): The callback function.
+  - `data` (`Object`): The data related to the tooltip and marker that the tooltip is bound too
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### api.onTooltipHide
+Registers a callback for the `onTooltipHide` event.
+- **callback** (`Function`): The callback function.
+  - `data` (`Object`): The data related to the tooltip and marker that the tooltip is bound too
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### api.onImageLoad
+Registers a callback for the `onImageLoad` event, which fires when the map image is loaded into the DOM.
+- **callback** (`Function`): The callback function.
 
-### Analyzing the Bundle Size
+#### api.onAssetLoad
+Registers a callback for the `onAssetLoad` event, which fires when the all of the map assets have finished being injected into the map svg.
+- **callback** (`Function`): The callback function.
+  - `data` (`Object`): The list of symbol nodes loaded and assets data used to load them
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+#### api.onLoad
+Registers a callback for the `onLoad` event, which fires when the map image and assets have finished their load events.
+- **callback** (`Function`): The callback function.

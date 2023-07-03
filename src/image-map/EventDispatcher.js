@@ -20,7 +20,7 @@ export default class EventDispatcher {
       "zoomToContainElement",
       "zoomToPosition",
       "centerMap",
-      "removeTooltip",
+      "hideTooltip",
       "showTooltip",
     ];
 

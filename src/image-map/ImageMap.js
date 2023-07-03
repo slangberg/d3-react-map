@@ -4,9 +4,6 @@ import AssetLoader from "./AssetLoader";
 import Tooltip from "./Tooltips";
 import EventDispatcher from "./EventDispatcher";
 
-/**
- * The base image map class used to generate can
- */
 export default class ImageMap {
   /**
    * Create an Image Map.
@@ -78,7 +75,7 @@ export default class ImageMap {
       .attr("href", this.imageData.path)
       .attr("width", "100%")
       .attr("height", "100%")
-      .style("opacity", "0")
+      .style("opacity", "0")x
       .on("load", () => this.setLoadState("image", true));
 
     const {
