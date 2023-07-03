@@ -1,10 +1,12 @@
-import { zoomTransform, select, easeBounce, easeCubic } from "d3";
+import { select, selectAll } from "d3";
 export default class Tooltip {
-  constructor({ svg, toolTipBoundary, markerGroup }) {
+  constructor({ svg, toolTipBoundary, markerGroup, eventDispatcher, multiSelection }) {
     this.svg = svg;
     this.tooltipObservers = {};
     this.toolTipBoundary = toolTipBoundary;
     this.markerGroup = markerGroup;
+    this.events = eventDispatcher;
+    this.multiSelection = multiSelection;
   }
 
   moveTooltip = (markerNode, tooltipOffsetX, tooltipOffsetY, markerData) => {
@@ -40,7 +42,35 @@ export default class Tooltip {
     }
   };
 
+  removeExistingTooltips = () => {
+    const _remove = this.removeTooltip;
+    selectAll(".marker-overlay").each(function(d, i) {
+      _remove(d.id)
+    });
+  }
+
+  removeTooltip = (id) => {
+    const existing = select(`#marker-overlay-${id}`);
+    if(existing.node()){
+      const content = existing.select(".marker-content");
+      const data = existing.datum();
+      this.events.dispatch("onTooltipHide", {
+        data: data,
+        contentNode: content.node(),
+        contentId: `#marker-overlay-${data.id}-content`,
+        contentClass: '.marker-content'
+      });
+      existing.remove();
+    } else {
+      console.error("Not matching tooltip open")
+    }
+  }
+
   drawTooltip = (markerNode, tooltipOffsetX, tooltipOffsetY, markerData) => {
+    if(!this.multiSelection){
+     this.removeExistingTooltips()
+    }
+
     const markerClientRect = markerNode.getBoundingClientRect();
     const overlayDiv = select("body")
       .append("div")
@@ -66,7 +96,18 @@ export default class Tooltip {
     overlayDiv
       .style("top", `${topOffset}px`)
       .style("left", `${leftOffset}px`)
-      .style("opacity", "1");
+      .style("opacity", "1")
+      .datum(markerData)
+
+    this.events.dispatch("onTooltipShow", {
+      data: markerData,
+      contentNode: content.node(),
+      position: {top: topOffset, left: leftOffset},
+      contentId: `#marker-overlay-${markerData.id}-content`,
+      contentClass: '.marker-content'
+    });
+
+
 
     this.translateContent(content);
   };

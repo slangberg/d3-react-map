@@ -20,11 +20,8 @@ function App() {
       { x: 0, y: 0, marker: "base", name: "Marker 1", id: 0 },
       { x: 100, y: 100, marker: "base", name: "Marker 2", id: 1 },
       { x: 200, y: 200, marker: "base", name: "Marker 3", id: 3 },
-      { x: 300, y: 300, marker: "base", name: "Marker 4", id: 4 },
-      { x: 660, y: 660, marker: "side", name: "Shape", id: 5 },
+      { x: 300, y: 300, marker: "base", name: "Marker 4", id: 4 }
     ];
-
-    // const assets = [{ url : pinUrl, id: "marker", offset: [28, 60], tooltipOffset: [0, 0]}]
 
     const assets = {
       base: {
@@ -49,9 +46,9 @@ function App() {
         imageData,
         markersData,
         assets,
-        single: true,
       });
       api = map.getEventApi();
+      // api.onTooltipShow(console.log)
     }
   }, []);
   return (
@@ -80,10 +77,10 @@ function App() {
         </button>
         <button
           onClick={() =>
-            api.zoomToContainElement(5)
+            api.showTooltip(0)
           }
         >
-          Zoom To Contain
+          Show Tooltip
         </button>
       </header>
       <svg id="floorplan"></svg>

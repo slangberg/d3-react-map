@@ -1,5 +1,5 @@
 // import d3 from "d3";
-import { zoomTransform, select, easeBounce, easeCubic } from "d3";
+import { zoomTransform, select, easeBounce } from "d3";
 
 export default class Markers {
   constructor({
@@ -12,7 +12,7 @@ export default class Markers {
     tooltipHandler,
     eventDispatcher,
   }) {
-    this.eventDispatcher = eventDispatcher;
+    this.events = eventDispatcher;
     this.markerGroup = markerGroup;
     this.svg = svg;
     this.defs = defs;
@@ -85,30 +85,40 @@ export default class Markers {
     });
   };
 
-
   getMarkerData = (markerId) => {
-    const d = this.markersData.find(({id}) => id === markerId)
+    const d = this.markersData.find(({ id }) => id === markerId);
     return {
       ...d,
       x: d.x + this.getMarkerOffset(d.marker, "x"),
       y: d.y + this.getMarkerOffset(d.marker, "y"),
-      toolTipX: d.x + this.getTooltipOffset(d.marker, "x"),
-      toolTipY: d.y + this.getTooltipOffset(d.marker, "y"),
-      node: this.markerGroup.select(`#marker-${d.id}`).node()
+      tooltipOffsetX: d.x + this.getTooltipOffset(d.marker, "x"),
+      tooltipOffsetY: d.y + this.getTooltipOffset(d.marker, "y"),
+      node: this.markerGroup.select(`#marker-${d.id}`).node(),
+      domId: `#marker-${d.id}`
+    };
+  };
+
+  showTooltip = (id) => {
+    const marker = select(`#marker-${id}`);
+    const data = this.getMarkerData(id);
+    if (marker.node() && data) {
+      this.tooltipHandler.drawTooltip(
+        marker.node(),
+        data.tooltipOffsetX,
+        data.tooltipOffsetY,
+        data
+      );
     }
-  }
+  };
 
   markerClicked(event, d) {
     event.stopPropagation();
     const existingOverlayDiv = select(`#marker-overlay-${d.id}`);
     const marker = select(event.target);
-    this.eventDispatcher.dispatch("onMarkerClick", {
-      data: {
-        ...d,
-        x: this.getMarkerOffset(d.marker, "x"),
-        y: this.getMarkerOffset(d.marker, "y"),
-      },
-    });
+    const markerData = this.getMarkerData(d.id);
+
+    this.events.dispatch("onMarkerClick", markerData);
+
     if (!existingOverlayDiv.node()) {
       const markerNode = marker.node();
       const tooltipOffsetX = this.getTooltipOffset(d.marker, "x");
@@ -130,7 +140,7 @@ export default class Markers {
         .ease(easeBounce)
         .attr("y", (d) => d.y + this.getMarkerOffset(d.marker, "y"));
     } else {
-      existingOverlayDiv.remove();
+      this.tooltipHandler.removeTooltip(d.id);
     }
   }
 }

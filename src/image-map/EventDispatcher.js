@@ -8,9 +8,18 @@ export default class EventDispatcher {
       "onLoad",
       "onMarkerClick",
       "onPanZoom",
+      "onTooltipShow",
+      "onTooltipHide"
     ];
 
-    this.actions = ["zoomToMarker", "zoomToContainElement", "zoomToPosition", "centerMap"];
+    this.actions = [
+      "zoomToMarker",
+      "zoomToContainElement",
+      "zoomToPosition",
+      "centerMap",
+      "removeTooltip",
+      "showTooltip"
+    ];
 
     this.eventTypes = [...this.events, ...this.actions];
 
@@ -23,6 +32,10 @@ export default class EventDispatcher {
   buildApiMethods = () => {
     this.actions.forEach((methodName) => {
       this[methodName] = (data) => this.dispatch(methodName, data);
+    });
+
+    this.events.forEach((methodName) => {
+      this[methodName] = (callback) => this.register(methodName, callback);
     });
   };
 
